@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+        "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<constant name="struts.devMode" value="false" />
+	<constant name="struts.objectFactory" value="spring" />
+	<constant name="struts.action.extension" value="," />
+	<package name="user" namespace="/" extends="struts-default">
+		<default-action-ref name="index" />
+		<action name="index">
+			<result>/page/login.jsp</result>
+		</action>
+		<action name="login" class="com.training.controller.UserAction"
+			method="login">
+			<result name="success" type="redirectAction">manage</result>
+			<result name="input">/page/login.jsp</result>
+		</action>
+		<action name="manage"
+			class="com.training.controller.UserAction" method="manage">
+			<result name="success">/page/usermanage.jsp</result>
+			<result name="login" type="redirectAction">login</result>
+		</action>
+		<action name="logout"
+			class="com.training.controller.UserAction" method="logout">
+			<result name="success">/page/login.jsp</result>
+		</action>
+	</package>
+	<package name="userapi" namespace="/" extends="json-default">
+		<action name="insertuser"
+			class="com.training.controller.UserAction" method="insert">
+			<result name="success" type="json"></result>
+			<result name="login" type="json"></result>
+		</action>
+		<action name="getuserbymail"
+			class="com.training.controller.UserAction" method="getbymail">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="deleteuser"
+			class="com.training.controller.UserAction" method="delete">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="changesttuser"
+			class="com.training.controller.UserAction" method="changestt">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="updateuser"
+			class="com.training.controller.UserAction" method="update">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="listuser"
+			class="com.training.controller.UserAction" method="findalluser">
+			<result name="success" type="json"></result>
+			<result name="login" type="json"></result>
+		</action>
+		<action name="listusersearch"
+			class="com.training.controller.UserAction" method="findallsearch">
+			<result name="success" type="json"></result>
+			<result name="login" type="json"></result>
+		</action>
+		<action name="listuserpage"
+			class="com.training.controller.UserAction" method="manage">
+			<result name="success" type="json"></result>
+			<result name="login" type="json"></result>
+		</action>
+		<action name="searchuser"
+			class="com.training.controller.UserAction" method="search">
+			<result name="success" type="json"></result>
+			<result name="login" type="json"></result>
+		</action>
+		<action name="searchbypage"
+			class="com.training.controller.UserAction" method="searchpage">
+			<result name="success" type="json"></result>
+			<result name="login" type="json"></result>
+		</action>
+	</package>
+
+</struts>

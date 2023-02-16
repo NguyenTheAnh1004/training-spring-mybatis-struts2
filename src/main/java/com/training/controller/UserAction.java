@@ -7,25 +7,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.apache.struts2.interceptor.SessionAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 
-import com.mysql.cj.Session;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.interceptor.ParameterNameAware;
+import com.training.mapper.UsersMapper;
 import com.training.model.User;
-import com.training.repository.UserRepository;
+
+//import com.training.repository.usersMapper;
 
 @Controller
 public class UserAction extends ActionSupport
@@ -35,8 +33,11 @@ public class UserAction extends ActionSupport
 
 	private static final long serialVersionUID = 1L;
 
+//	@Autowired
+//	private usersMapper usersMapper;
+	
 	@Autowired
-	private UserRepository userRepository;
+	private UsersMapper usersMapper;
 
 	protected HttpServletRequest servletRequest;
 	protected HttpServletResponse servletResponse;
@@ -52,7 +53,7 @@ public class UserAction extends ActionSupport
 	private List<User> users;
 
 	private int page = 1;
-	private int size = 6;
+	private int size = 5;
 
 	private Long id;
 	private String name;
@@ -61,7 +62,7 @@ public class UserAction extends ActionSupport
 	private String password;
 
 //	public String name, email, role, password;
-	private boolean status;
+	private Boolean status;
 
 	
 	//login
@@ -71,7 +72,7 @@ public class UserAction extends ActionSupport
 		String token = UUID.randomUUID().toString();
 		
 		if (userBean == null) {
-			if (getRememberToken() != null && userRepository.getRememberToken(getRememberToken()) > 0) {
+			if (getRememberToken() != null && usersMapper.getRememberToken(getRememberToken()) > 0) {
 				return SUCCESS;
 			}
 			if (userSession.get(REMEMBER_TOKEN) != null) {
@@ -81,17 +82,17 @@ public class UserAction extends ActionSupport
 			return INPUT;
 		} else if (userBean.getEmail().length() > 0 && userBean.getPassword().length() > 0) {
 			User user = new User();
-			user = userRepository.getUserByMail(userBean.getEmail());
+			user = usersMapper.getUserByMail(userBean.getEmail());
 			if (user.getStatus() == true) {
 				userSession.put(REMEMBER_TOKEN, token);
 				userSession.put(USER, user.getEmail());
 				user.setLoginDate(new Date());
 				user.setLastIpLogin(IP.getHostAddress());
 				user.setRememberToken(token);
-				userRepository.updateLogin(user);
+				usersMapper.updateLogin(user);
 				if (isRemember()) {
 					user.setRememberToken(token);
-					userRepository.updateRmbToken(user);
+					usersMapper.updateRmbToken(user);
 					Cookie cookie = new Cookie(REMEMBER_TOKEN, token);
 					cookie.setMaxAge(tokenExpiredTime);
 					Cookie cookieName = new Cookie(USER, user.getEmail());
@@ -129,14 +130,14 @@ public class UserAction extends ActionSupport
 		if (getRememberToken() == null && userSession.get(REMEMBER_TOKEN) == null) {
 			return "login";
 		}
-		if (getRememberToken() != null && userRepository.getRememberToken(getRememberToken()) > 0) {
-			User user1 = userRepository.getMailByToken(getRememberToken());
+		if (getRememberToken() != null && usersMapper.getRememberToken(getRememberToken()) > 0) {
+			User user1 = usersMapper.getMailByToken(getRememberToken());
 			userSession.put(USER, user1.getEmail());
 		}
 		System.out.println(page);
-		System.out.println(size);
+		System.out.println("status is "+ status);
 		System.out.println(userSession.get(REMEMBER_TOKEN));
-		this.users = userRepository.getUserAllWPage((page-1)*size, size);
+		this.users = usersMapper.getUserAllWPage((page-1)*size, size);
 		return SUCCESS;
 	}
 
@@ -144,17 +145,25 @@ public class UserAction extends ActionSupport
 		if (getRememberToken() == null && userSession.get(REMEMBER_TOKEN) == null) {
 			return "login";
 		}
-		if (getRememberToken() != null && userRepository.getRememberToken(getRememberToken()) > 0) {
-			User user1 = userRepository.getMailByToken(getRememberToken());
+		if (getRememberToken() != null && usersMapper.getRememberToken(getRememberToken()) > 0) {
+			User user1 = usersMapper.getMailByToken(getRememberToken());
 			userSession.put(USER, user1.getEmail());
 		}
-
 		System.out.println(email);
 		System.out.println(name);
 		System.out.println(status);
 		System.out.println(role);
 		User user = new User(email, name, role, status);
-		this.users = userRepository.findUserByOption((page-1)*size, size,user);
+		this.users = usersMapper.findUserByOption((page-1)*size, size,user);
+		return SUCCESS;
+	}
+	
+	public String testmb() {
+//		usersExample example = new usersExample();
+//		users usersmb = usersMapper.selectByPrimaryKey("admin@gmail.com");
+//		System.out.println(usersmb);
+		this.users = usersMapper.getAllUsers();
+//		System.out.println("test"+user);
 		return SUCCESS;
 	}
 	
@@ -164,11 +173,11 @@ public class UserAction extends ActionSupport
 		if (getRememberToken() == null && userSession.get(REMEMBER_TOKEN) == null) {
 			return "login";
 		}
-		if (getRememberToken() != null && userRepository.getRememberToken(getRememberToken()) > 0) {
-			User user1 = userRepository.getMailByToken(getRememberToken());
+		if (getRememberToken() != null && usersMapper.getRememberToken(getRememberToken()) > 0) {
+			User user1 = usersMapper.getMailByToken(getRememberToken());
 			userSession.put(USER, user1.getEmail());
 		}
-		this.users = userRepository.getUserAll();
+		this.users = usersMapper.getUserAll();
 		return SUCCESS;
 	}
 	
@@ -178,8 +187,8 @@ public class UserAction extends ActionSupport
 		if (getRememberToken() == null && userSession.get(REMEMBER_TOKEN) == null) {
 			return "login";
 		}
-		if (getRememberToken() != null && userRepository.getRememberToken(getRememberToken()) > 0) {
-			User user1 = userRepository.getMailByToken(getRememberToken());
+		if (getRememberToken() != null && usersMapper.getRememberToken(getRememberToken()) > 0) {
+			User user1 = usersMapper.getMailByToken(getRememberToken());
 			userSession.put(USER, user1.getEmail());
 		}
 		System.out.println(email);
@@ -187,7 +196,7 @@ public class UserAction extends ActionSupport
 		System.out.println(status);
 		System.out.println(role);
 		User user = new User(email, name, role, status);
-		this.users = userRepository.findAllUserBySearch(user);
+		this.users = usersMapper.findAllUserBySearch(user);
 		return SUCCESS;
 	}
 	
@@ -196,21 +205,21 @@ public class UserAction extends ActionSupport
 //	if (getRememberToken() == null && userSession.get(REMEMBER_TOKEN) == null) {
 //		return "login";
 //	}
-//	if (getRememberToken() != null && userRepository.getRememberToken(getRememberToken()) > 0) {
-//		User user1 = userRepository.getMailByToken(getRememberToken());
+//	if (getRememberToken() != null && usersMapper.getRememberToken(getRememberToken()) > 0) {
+//		User user1 = usersMapper.getMailByToken(getRememberToken());
 //		userSession.put(USER, user1.getEmail());
 //	}
 
 	System.out.println(page);
 	System.out.println(size);
 //	User user = new User(email,name,role,status);
-	this.users = userRepository.getUserAllWPage((page-1)*size, size);
+	this.users = usersMapper.getUserAllWPage((page-1)*size, size);
 	System.out.println(this.users);
 	return SUCCESS;
 }
 	public String getbymail() {
 		try {
-			this.userBean = userRepository.getUserByMail(email);
+			this.userBean = usersMapper.getUserByMail(email);
 			System.out.println("USER " + userBean);
 		} catch (Exception e) {
 			System.out.println(e);
@@ -221,7 +230,7 @@ public class UserAction extends ActionSupport
 	public String changestt() {
 		System.out.println(id);
 		System.out.println(status);
-		userRepository.changestt(id, !status);
+		usersMapper.changestt(id, !status);
 		return SUCCESS;
 	}
 
@@ -230,7 +239,7 @@ public class UserAction extends ActionSupport
 		try {
 			User user = new User();
 			if (userBean.getEmail().length() > 0 && userBean.getPassword().length() > 0) {
-				user = userRepository.getUserByMail(userBean.getEmail());
+				user = usersMapper.getUserByMail(userBean.getEmail());
 				System.out.println(userBean.getPassword() + passwordEncoder.encode(userBean.getPassword()));
 			}
 
@@ -263,20 +272,20 @@ public class UserAction extends ActionSupport
 		User user = new User(email, passwordEncoder.encode(password), name, role, status);
 		user.setCreatedAt(new Date());
 		System.out.println(user.getEmail());
-		userRepository.insertUser(user);
+		usersMapper.insertUser(user);
 		return SUCCESS;
 	}
 
 	public String update() {
 		User user = new User(id, email, name, role, status);
 		System.out.println(user.getEmail());
-		userRepository.updateUser(user);
+		usersMapper.updateUser(user);
 		return SUCCESS;
 	}
 
 	public String delete() {
 		System.out.println(id);
-		userRepository.updatedelete(id);
+		usersMapper.updatedelete(id);
 		return SUCCESS;
 	}
 
@@ -340,11 +349,11 @@ public class UserAction extends ActionSupport
 		this.password = password;
 	}
 
-	public boolean isStatus() {
+	public Boolean getStatus() {
 		return status;
 	}
 
-	public void setStatus(boolean status) {
+	public void setStatus(Boolean status) {
 		this.status = status;
 	}
 
@@ -371,6 +380,9 @@ public class UserAction extends ActionSupport
 	public void setSize(int size) {
 		this.size = size;
 	}
+	
+	
+
 
 	public Integer getTokenExpiredTime() {
 		if (servletRequest.getCookies() != null)

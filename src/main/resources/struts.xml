@@ -27,7 +27,13 @@
 			class="com.training.controller.UserAction" method="logout">
 			<result name="success">/page/login.jsp</result>
 		</action>
+		<action name="productmanage"
+			class="com.training.controller.ProductAction" method="productmanage">
+			<result name="success">/page/productmanage.jsp</result>
+			<result name="login" type="redirectAction">login</result>
+		</action>
 	</package>
+
 	<package name="userapi" namespace="/" extends="json-default">
 		<action name="insertuser"
 			class="com.training.controller.UserAction" method="insert">
@@ -65,6 +71,11 @@
 			<result name="success" type="json"></result>
 			<result name="login" type="json"></result>
 		</action>
+		<action name="listuserbypage"
+			class="com.training.controller.UserAction" method="listbypage">
+			<result name="success" type="json"></result>
+			<result name="login" type="json"></result>
+		</action>
 		<action name="searchuser"
 			class="com.training.controller.UserAction" method="search">
 			<result name="success" type="json"></result>
@@ -72,6 +83,50 @@
 		</action>
 		<action name="searchbypage"
 			class="com.training.controller.UserAction" method="searchpage">
+			<result name="success" type="json"></result>
+			<result name="login" type="json"></result>
+		</action>
+		<action name="testmb"
+			class="com.training.controller.UserAction" method="testmb">
+			<result name="success" type="json"></result>
+			<result name="login" type="json"></result>
+		</action>
+	</package>
+
+	<package name="productapi" namespace="/" extends="json-default">
+		<action name="listproduct"
+			class="com.training.controller.ProductAction" method="findall">
+			<result name="success" type="json"></result>
+			<result name="login" type="json"></result>
+		</action>
+		<action name="listproductpage"
+			class="com.training.controller.ProductAction" method="findbypage">
+			<result name="success" type="json"></result>
+			<result name="login" type="json"></result>
+		</action>
+		<action name="listproductsearch"
+			class="com.training.controller.ProductAction" method="findbysearch">
+			<result name="success" type="json"></result>
+			<result name="login" type="json"></result>
+		</action>
+		<action name="listallproductsearch"
+			class="com.training.controller.ProductAction"
+			method="findallbysearch">
+			<result name="success" type="json"></result>
+			<result name="login" type="json"></result>
+		</action>
+		<action name="insertproduct"
+			class="com.training.controller.ProductAction" method="insert">
+			<result name="success" type="json"></result>
+			<result name="login" type="json"></result>
+		</action>
+		<action name="updateproduct"
+			class="com.training.controller.ProductAction" method="update">
+			<result name="success" type="json"></result>
+			<result name="login" type="json"></result>
+		</action>
+		<action name="deleteproduct"
+			class="com.training.controller.ProductAction" method="delete">
 			<result name="success" type="json"></result>
 			<result name="login" type="json"></result>
 		</action>

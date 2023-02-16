@@ -10,7 +10,7 @@
 	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
 	crossorigin="anonymous">
 <link rel="stylesheet" href="../resources/css/usermanage.css" />
-<title>UserMange</title>
+<title>ProductManage</title>
 </head>
 <body>
 
@@ -22,13 +22,13 @@
 		<div class="collapse navbar-collapse" id="navbarTogglerDemo03">
 			<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 				<li class="nav-item active mr-2 ml-2"><a class="nav-link"
-					href="productmanage.do">Sản phẩm <span class="sr-only">(current)</span>
+					href="#">Sản phẩm <span class="sr-only">(current)</span>
 				</a></li>
 				<li class="nav-item active mr-2 ml-2"><a class="nav-link"
 					href="#">Khách hàng <span class="sr-only">(current)</span>
 				</a></li>
 				<li class="nav-item active mr-2 ml-2"><a class="nav-link"
-					href="#">Users <span class="sr-only">(current)</span>
+					href="manage.do">Users <span class="sr-only">(current)</span>
 				</a></li>
 			</ul>
 			<!-- Right elements -->
@@ -53,71 +53,92 @@
 		</div>
 	</nav>
 	<div class="head">
-		<h3>Users</h3>
+		<h3>Product</h3>
 		<p class="line-blue"></p>
 	</div>
 	<div id="user">
 
 		<div class="wrapper-action d-flex justify-content-center">
-			<form method="GET" id="searchForm" enctype="multipart/form-data">
+			<form method="GET" id="searchProductForm" enctype="multipart/form-data">
 				<div class="action-form">
 					<div class="search-input d-flex">
 						<div class="form-group mr-4">
-							<label for="name">Tên</label> <input type="text" name="name"
-								class="form-control" id="name" placeholder="Nhập họ tên" />
+							<label for="productName">Tên sản phẩm</label>
+							<input
+								type="text"
+								name="productName"
+								class="form-control"
+								id="productName"
+								placeholder="Nhập tên sản phẩm"
+							/>
 							<!-- <small id="emailHelp" class="form-text text-muted"
-                                >We'll never share your email with anyone else.</small
-                            > -->
+							>We'll never share your email with anyone else.</small
+						> -->
 						</div>
+
 						<div class="form-group mr-4">
-							<label for="email">Email</label> <input type="text" name="email"
-								class="form-control" id="email" placeholder="Nhập email" />
-							<!-- <small id="emailHelp" class="form-text text-muted"
-                                >We'll never share your email with anyone else.</small
-                            > -->
-						</div>
-						<div class="form-group mr-4">
-							<label for="group">Nhóm</label>
+							<label for="product-active">Trạng thái</label>
 							<!-- <input
-                                    type="text"
-                                    name="groups"
-                                    class="form-control"
-                                    id="group"
-                                    placeholder="Chọn nhóm"
-                                /> -->
-							<select name="role" id="group" class="form-control pr-5">
-								<option value='' selected>TẤT CẢ</option>
-								<option value="Admin">ADMIN</option>
-								<option value="Reviewer">REVIEWER</option>
-								<option value="Editor">EDITOR</option>
+								type="text"
+								name="groups"
+								class="form-control"
+								id="group"
+								placeholder="Chọn nhóm"
+							/> -->
+							<select name="product-active" id="product-active" class="form-control pr-5">
+								<option value="">Tất cả</option>
+								<option value="1">Đang bán</option>
+								<option value="2">Ngưng bán</option>
+								<option value="3">Hết hàng</option>
 							</select>
 							<!-- <small id="emailHelp" class="form-text text-muted"
-                                >We'll never share your email with anyone else.</small
-                            > -->
+							>We'll never share your email with anyone else.</small
+						> -->
 						</div>
-						<div class="form-group mr-0">
-							<label for="inputState">Trạng thái</label> <select name="status"
-								id="inputState" class="form-control pr-5">
-								<option value="true">Đang hoạt động</option>
-								<option value="false">Tạm khóa</option>
-							</select>
-							<!-- <small id="emailHelp" class="form-text text-muted"
-                                >We'll never share your email with anyone else.</small
-                            > -->
+						<div class="price-range d-flex align-items-center justify-content-between">
+							<div class="form-group mr-4">
+								<label for="priceFrom">Giá bán từ</label>
+								<input
+									type="text"
+									name="priceFrom"
+									class="form-control"
+									id="priceFrom"
+									placeholder="từ"
+								/>
+							</div>
+							<div class="form-group position-relative">
+								<label></label>
+								<span class="price-from-to-ic">~</span>
+							</div>
+							<div class="form-group mr-0">
+								<label for="priceTo">Giá bán đến</label>
+								<input
+									type="text"
+									name="priceTo"
+									class="form-control"
+									id="priceTo"
+									placeholder="đến"
+								/>
+							</div>
 						</div>
 					</div>
 
 					<div class="action d-flex justify-content-between">
 						<div class="left">
-							<button type="button" class="btn btn-primary" data-toggle="modal"
-								data-target="#addModal" class="btn-primary btn"
-								onclick="handleChangeAction(false);">Thêm mới</button>
+							<button
+								type="button"
+								class="btn btn-primary"
+								data-toggle="modal"
+								data-target="#addProductModal"
+								class="btn-primary btn"
+								onclick="handleChangeActionProduct(false);"
+							>
+								Thêm mới
+							</button>
 						</div>
 						<div class="right">
-							<button id="btnSearch" type="button" class="btn-primary btn" >Tìm
-								kiếm</button>
-							<button type="button" onclick="resetForm()"
-								class="btn-success btn">Xóa tìm</button>
+							<button type="button" id="btnSearchProduct" class="btn-primary btn">Tìm kiếm</button>
+							<button type="button" id="btnResetFormProduct" class="btn-success btn" onclick="resetForm()">Xóa tìm</button>
 						</div>
 					</div>
 				</div>
@@ -126,7 +147,7 @@
 		
 
 		<div class="list-user" id="tablelist">
-			<div id="headtb">
+			<div id="headtbproduct">
 				<!-- <p class="font-monospace ml-2 font-weight-bold">hiển thị 1 - 5 trên tổng 20 user</p> -->
 			</div>
 			
@@ -135,22 +156,22 @@
 					<tr>
 						<th scope="col">STT</th>
 						<th scope="col">ID</th>
-						<th scope="col">Họ tên</th>
-						<th scope="col">Email</th>
-						<th scope="col">Role</th>
-						<th scope="col">Trạng Thái</th>
+						<th scope="col">Tên sản phẩm</th>
+						<th scope="col">Mô tả</th>
+						<th scope="col">Giá</th>
+						<th scope="col">Tình trạng</th>
 						<th scope="col">ACtion</th>
 					</tr>
 				</thead>
-				<tbody id="tbody">
-					<s:iterator value="users">
+				<tbody id="tproductbody">
+					
 						<!-- <tr>
 							<td class="nowrap"><s:property value="id" /></td>
 							<td class="nowrap"><s:property value="name" /></td>
 							<td class="nowrap"><s:property value="email" /></td>
 							<td class="nowrap"><s:property value="groupRole" /></td>
 							<td class="nowrap"><s:if test="status">
-									<span class="text-success">Đang hoạt động</span>
+									<span class="text-success">Đang bán</span>
 								</s:if> <s:else>
 									<span class="text-danger">Tạm khóa</span>
 								</s:else></td>
@@ -182,13 +203,13 @@
 							</td>
 
 						</tr> -->
-					</s:iterator>
+				
 				</tbody>
 				
 			</table>
 
 			<nav aria-label="Page navigation example">
-				<ul class="pagination ml-2" id="list-pagination">
+				<ul class="pagination ml-2" id="listproduct-pagination">
 				  <!-- <li class="page-item"><a class="page-link" href="#">Previous</a></li>
 				  <li class="page-item"><a class="page-link" href="#">1</a></li>
 				  <li class="page-item"><a class="page-link" href="#">2</a></li>
@@ -211,7 +232,7 @@
 			
 		</div>
 		<!-- Modal -->
-		<div class="modal fade" id="addModal" tabindex="-1"
+		<div class="modal fade" id="addProductModal" tabindex="-1"
 			aria-labelledby="exampleModalLabel" aria-hidden="true">
 			<div class="modal-dialog d-flex justify-content-center">
 				<form id="insertForm">
@@ -233,72 +254,47 @@
 										id="modalName" />
 								</div>
 								<div class="ml-5">
-									<small class="pl-5 ml-5 text-danger" id="errorName"></small>
+									<small class="pl-5 ml-5 text-danger" id="errorProductName"></small>
 								</div>
 							</div>
 							<div class="form-group row">
-								<label for="modalEmail" class="col-sm-2 col-form-label">Email
+								<label for="modalPrince" class="col-sm-2 col-form-label">Giá bán
 									<small class="text-danger">*</small>
 								</label>
 								<div class="col-sm-10">
-									<input name="email" type="email" class="form-control"
-										id="modalEmail" />
+									<input name="prince" type="text" class="form-control"
+										id="modalPrince" />
 								</div>
 								<div class="ml-5">
-									<small class="pl-5 ml-5 text-danger" id="errorEmail"></small>
+									<small class="pl-5 ml-5 text-danger" id="errorProductPrince"></small>
 								</div>
 							</div>
 							<div class="form-group row">
-								<label for="modalPassword" class="col-sm-2 col-form-label">Mật
-									khẩu <small class="text-danger">*</small>
-								</label>
-								<div class="col-sm-10">
-									<input name="password" type="password" class="form-control"
-										id="modalPassword" />
-								</div>
-								<div class="ml-5">
-									<small class="pl-5 ml-5 text-danger" id="errorPassword"></small>
-								</div>
-							</div>
-							<div class="form-group row">
-								<label for="modalRePassword" class="col-sm-2 col-form-label">Xác
-									nhận <small class="text-danger">*</small>
-								</label>
-								<div class="col-sm-10">
-									<input name="repassword" type="password" class="form-control"
-										id="modalRePassword" />
-								</div>
-								<div class="ml-5">
-									<small class="pl-5 ml-5 text-danger" id="errorRePassword"></small>
-								</div>
-							</div>
-							<div class="form-group row">
-								<label for="modalGroup" class="col-sm-2 col-form-label">Nhóm
+								<label for="modalDes" class="col-sm-2 col-form-label">Mô tả
 									<small class="text-danger">*</small>
 								</label>
 								<div class="col-sm-10">
-									<select name="role" id="modalGroup" class="form-control pr-5">
-										<option value="Admin">ADMIN</option>
-										<option value="Reviewer">REVIEWER</option>
-										<option value="Editor">EDITOR</option>
+									<textarea name="des" row="3" class="form-control"
+										id="modalDes"> </textarea>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="modalStt" class="col-sm-2 col-form-label">Trạng thái
+									<small class="text-danger">*</small>
+								</label>
+								<div class="col-sm-10">
+									<select name="stt" id="modalStt" class="form-control pr-5">
+										<option value="1">Còn bán</option>
+										<option value="2">Ngưng bán</option>
+										<option value="3">Hết hàng</option>
 									</select>
 								</div>
-								<div class="ml-5">
-									<small id="errorGroup" class="pl-5 ml-5 text-danger" id="error"></small>
-								</div>
-							</div>
-							<div class="form-group row">
-								<label for="" class="col-sm-2 col-form-label">Trạng thái</label>
-								<input id="CheckStt" type="checkbox" checked name="status" /> <label
-									for=""
-									class="col-sm-2 col-form-label font-weight-bold text-success"
-									id="Stt">Hoạt động ?</label>
 							</div>
 						</div>
 						<div class="modal-footer" id="actionFormEdit">
 							<button type="button" class="btn btn-secondary"
 								data-dismiss="modal">Hủy</button>
-							<button type="button" id="btnSave" class="btn btn-primary">Lưu</button>
+							<button type="button" id="btnProductSave" class="btn btn-primary">Lưu</button>
 						</div>
 					</div>
 				</form>
@@ -307,7 +303,7 @@
 		<!-- end modal -->
 
 		<!-- edit Modal -->
-		<div class="modal fade" id="editModal" tabindex="-1"
+		<div class="modal fade" id="editProductModal" tabindex="-1"
 			aria-labelledby="exampleModalLabel" aria-hidden="true">
 			<div class="modal-dialog d-flex justify-content-center">
 				<form id="insertForm">
@@ -320,8 +316,8 @@
 							</button>
 						</div>
 						<div class="modal-body">
-							<input type="hidden" name="id-edit" />
 							<div class="form-group row">
+								<input type="hidden" name="id-edit" />
 								<label for="modalName" class="col-sm-2 col-form-label">Tên
 									<small class="text-danger">*</small>
 								</label>
@@ -330,48 +326,47 @@
 										id="modalName" />
 								</div>
 								<div class="ml-5">
-									<small class="pl-5 ml-5 text-danger" id="errorEditName"></small>
+									<small class="pl-5 ml-5 text-danger" id="errorProductName"></small>
 								</div>
 							</div>
 							<div class="form-group row">
-								<label for="modalEmail" class="col-sm-2 col-form-label">Email
+								<label for="modalPrince" class="col-sm-2 col-form-label">Giá bán
 									<small class="text-danger">*</small>
 								</label>
 								<div class="col-sm-10">
-									<input name="email" type="email" class="form-control"
-										id="modalEmail" />
+									<input name="prince" type="text" class="form-control"
+										id="modalPrince" />
 								</div>
 								<div class="ml-5">
-									<small class="pl-5 ml-5 text-danger" id="errorEditEmail"></small>
+									<small class="pl-5 ml-5 text-danger" id="errorProductPrince"></small>
 								</div>
 							</div>
 							<div class="form-group row">
-								<label for="modalGroup" class="col-sm-2 col-form-label">Nhóm
+								<label for="modaleditDes" class="col-sm-2 col-form-label">Mô tả
 									<small class="text-danger">*</small>
 								</label>
 								<div class="col-sm-10">
-									<select name="role" id="modalGroup" class="form-control pr-5">
-										<option value="Admin">ADMIN</option>
-										<option value="Reviewer">REVIEWER</option>
-										<option value="Editor">EDITOR</option>
+									<textarea name="des" row="3" class="form-control"
+										id="modaleditDes"> </textarea>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="modalStt" class="col-sm-2 col-form-label">Trạng thái
+									<small class="text-danger">*</small>
+								</label>
+								<div class="col-sm-10">
+									<select name="stt" id="modalStt" class="form-control pr-5">
+										<option value="1">Đang bán</option>
+										<option value="2">Ngưng bán</option>
+										<option value="3">Hết hàng</option>
 									</select>
 								</div>
-								<div class="ml-5">
-									<small id="errorGroup" class="pl-5 ml-5 text-danger" id="error"></small>
-								</div>
-							</div>
-							<div class="form-group row">
-								<label for="" class="col-sm-2 col-form-label">Trạng thái</label>
-								<input id="CheckStt" type="checkbox" checked name="status" /> <label
-									for=""
-									class="col-sm-2 col-form-label font-weight-bold text-success"
-									id="Stt">Hoạt động ?</label>
 							</div>
 						</div>
 						<div class="modal-footer" id="actionFormEdit">
 							<button type="button" class="btn btn-secondary"
 								data-dismiss="modal">Hủy</button>
-							<button type="button" id="btnEdit" class="btn btn-primary">Lưu</button>
+							<button type="button" id="btnProductEdit" class="btn btn-primary">Lưu</button>
 						</div>
 					</div>
 				</form>
@@ -380,7 +375,7 @@
 		<!-- end edit modal -->
 
 		<!-- delete Modal -->
-		<div class="modal fade" id="deleteModal" tabindex="-1"
+		<div class="modal fade" id="deleteProductModal" tabindex="-1"
 			aria-labelledby="exampleModalLabel" aria-hidden="true">
 			<div class="modal-dialog d-flex justify-content-center">
 				<form id="insertForm">
@@ -399,7 +394,7 @@
 						<div class="modal-footer" id="actionFormEdit">
 							<button type="button" class="btn btn-secondary"
 								data-dismiss="modal">Hủy</button>
-							<button type="button" id="btnRemove" class="btn btn-primary">Xóa</button>
+							<button type="button" id="btnProductRemove" class="btn btn-primary">Xóa</button>
 						</div>
 
 					</div>
@@ -454,7 +449,7 @@
 		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
 		crossorigin="anonymous"></script>
 
-	<script src="../resources/js/user.js"></script>
+	<script src="../resources/js/product.js"></script>
 	<script src="../resources/js/jquery.twbsPagination.js" type="text/javascript"></script>
 
 </body>

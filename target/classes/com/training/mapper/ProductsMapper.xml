@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.mapper.ProductsMapper">
+
+	<resultMap id="productResultMap"
+		type="com.training.model.Product">
+		<result property="isDelete" column="is_delete" />
+		<result property="shortDes" column="short_description" />
+	</resultMap>
+
+	<select id="getAllProducts" resultMap="productResultMap">
+		select * from products
+		WHERE products.is_delete = 0 
+	</select>
+
+	<select id="getProductsByPage" resultMap="productResultMap">
+		select * from products
+		WHERE products.is_delete = 0 ORDER BY create_at DESC
+		limit #{page},#{size} 
+	</select>
+
+	<select id="getProductsBySearch" resultMap="productResultMap">
+		select * from
+		products
+		WHERE products.is_delete = 0 And products.name
+		like
+		CONCAT('%',
+		#{name}, '%')
+		<if test="active != null">
+			And products.active = #{active}
+		</if>
+		<if test="princefrom != null and princeto != null">
+			and
+			products.prince BETWEEN #{princefrom} AND #{princeto}
+		</if>
+		limit
+		#{page},#{size}
+	</select>
+
+	<select id="getAllProductsBySearch" resultMap="productResultMap">
+		select * from
+		products
+		WHERE products.is_delete = 0 And products.name
+		like
+		CONCAT('%',
+		#{name}, '%')
+		<if test="active != null">
+			And products.active = #{active}
+		</if>
+		<if test="princefrom != null and princeto != null">
+			and
+			products.prince BETWEEN #{princefrom} AND #{princeto}
+		</if>
+
+	</select>
+
+	<insert id="insertProduct">
+		INSERT INTO products (name, prince,
+		short_description, active, is_delete,
+		create_at) VALUES
+		(#{product.name},
+		#{product.prince}, #{product.shortDes},
+		#{product.active},
+		false, #{product.createdAt})
+	</insert>
+
+	<update id="updateProduct">
+		UPDATE products SET products.name = #{product.name},
+		products.prince = #{product.prince},
+		products.short_description =
+		#{product.shortDes},
+		products.active = #{product.active}
+		WHERE
+		products.id = #{product.id}
+	</update>
+
+	<update id="deleteProduct">
+		UPDATE products SET products.is_delete = true
+		WHERE
+		products.id = #{id}
+	</update>
+
+	<insert id="insertTest">
+		INSERT INTO products (prince) VALUES (200)
+	</insert>
+
+</mapper>

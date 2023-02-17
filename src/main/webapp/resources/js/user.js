@@ -6,8 +6,9 @@ let role = '';
 let status = true;
 let currentPage = 1;
 let pageNumberIndex = 0;
+let limitsize = 4;
 // getUsers();
-getUsersByPage(1,5);
+getUsersByPage(1,limitsize);
 // loadPage();
 // if(search == false){
 // 	loadPage();
@@ -88,7 +89,7 @@ $("#btnEdit").click(async function() {
 						location.reload();
 					}
 					else{
-						getUsersByPage(pageNumberIndex+1,5);
+						getUsersByPage(pageNumberIndex+1,limitsize);
 					}
 				}
 				else {
@@ -269,7 +270,7 @@ $("#btnChangeStt").click(function() {
 					location.reload();
 				}
 				else{
-					getUsersByPage(pageNumberIndex+1,5);
+					getUsersByPage(pageNumberIndex+1,limitsize);
 				}
 				
 				
@@ -300,7 +301,7 @@ async function getUsers(page = 0, size = 10) {
 	});  
 	console.log('tataaaaa'+data.users)
 	console.log('pages'+data.users.length)
-	return data.users;
+	return data.totalUsers;
 }
 
 async function getAllUsersSearch() {
@@ -308,19 +309,35 @@ async function getAllUsersSearch() {
 	this.email = $('#searchForm input[name="email"]').val();
 	this.role = $('#searchForm select[name="role"] option:selected').val();
 	this.status = $('#searchForm select[name="status"] option:selected').val();
-	var data = await $.ajax({
-		type: 'GET',
-		url: 'listusersearch.do',
-		data: 'name=' + this.name
-		+ '&email=' + this.email
-		+ '&role=' + this.role
-		+ '&status=' + this.status,
-		success: function(data) {
-			// loadDataUser(data.users);
-			// console.log(data.users)
-		},
-	});  
-	return data.users;
+	if(this.status == ''){
+		var data = await $.ajax({
+			type: 'GET',
+			url: 'listusersearch.do',
+			data: 'name=' + this.name
+			+ '&email=' + this.email
+			+ '&role=' + this.role,
+			success: function(data) {
+				// loadDataUser(data.users);
+				// console.log(data.users)
+			},
+		});  
+	}
+	else{
+		var data = await $.ajax({
+			type: 'GET',
+			url: 'listusersearch.do',
+			data: 'name=' + this.name
+			+ '&email=' + this.email
+			+ '&role=' + this.role
+			+ '&status=' + this.status,
+			success: function(data) {
+				// loadDataUser(data.users);
+				// console.log(data.users)
+			},
+		});  
+	}
+	
+	return data.totalUsers;
 }
 
 function getUsersByPage(page = 1, size = 10) {
@@ -334,21 +351,44 @@ function getUsersByPage(page = 1, size = 10) {
 	});
 }
 
-function getSearchUsers(page = 1, size = 5, name = '', email = '', role = '', status) {
-	$.ajax({
-		type: 'GET',
-		url: 'searchuser.do',
-		data: 'name=' + name
-		+ '&email=' + email
-		+ '&role=' + role
-		+ '&status=' + status
-		+ '&page=' + page 
-		+ '&size=' + size,
-		success: function(data) {
-			console.log(data.users);
-			loadDataUser(data.users);
-		},
-	});
+function getSearchUsers(page = 1, size = limitsize, name = '', email = '', role = '', status) {
+	this.name = $('#searchForm input[name="name"]').val();
+	this.email = $('#searchForm input[name="email"]').val();
+	this.role = $('#searchForm select[name="role"] option:selected').val();
+	this.status = $('#searchForm select[name="status"] option:selected').val();
+	// alert('status là' + status )
+	if(status == '' || typeof(status) === "undefined"){
+		$.ajax({
+			type: 'GET',
+			url: 'searchuser.do',
+			data: 'name=' + name
+			+ '&email=' + email
+			+ '&role=' + role
+			+ '&page=' + page 
+			+ '&size=' + size,
+			success: function(data) {
+				console.log(data.users);
+				loadDataUser(data.users);
+			},
+		});
+	}
+	else{
+		$.ajax({
+			type: 'GET',
+			url: 'searchuser.do',
+			data: 'name=' + name
+			+ '&email=' + email
+			+ '&role=' + role
+			+ '&status=' + status
+			+ '&page=' + page 
+			+ '&size=' + size,
+			success: function(data) {
+				console.log(data.users);
+				loadDataUser(data.users);
+			},
+		});
+	}
+
 }
 
 
@@ -363,7 +403,7 @@ $("#btnSearch").click(function() {
 	console.log('sear' + search);
 	activeNumber(0);
 	console.log('data'+this.name+this.email+this.role+this.status)
-	getSearchUsers(1,5,this.name,this.email,this.role,this.status);
+	getSearchUsers(1,limitsize,this.name,this.email,this.role,this.status);
 	
 });
 
@@ -379,7 +419,7 @@ async function loadDataUser(data) {
 	for (var i = 0; i < data.length; i++) {
 		userData += `
 		<tr>
-							<td class="nowrap">${pageNumberIndex*5+i+1}</td>
+							<td class="nowrap">${pageNumberIndex*limitsize+i+1}</td>
 							<td class="nowrap">${users[i].id ? users[i].id : ''}</td>
 							<td class="nowrap">${users[i].name ? users[i].name : ''}</td>
 							<td class="nowrap">${users[i].email ? users[i].email : ''}</td>
@@ -427,18 +467,18 @@ async function loadDataUser(data) {
 	var pagination;
 	if(search == true ){
 		pagination = `				
-		<li class="page-item"><a class="page-link" href="#" onclick="getSearchUsers(${pageNumberIndex},${5}, '${this.name}','${this.email}','${this.role}',${this.status}), activeNumber(${pageNumberIndex-1})">Previous</a></li>
+		<li class="page-item"><a class="page-link" href="#" onclick="getSearchUsers(${pageNumberIndex},${limitsize}, '${this.name}','${this.email}','${this.role}',${this.status}), activeNumber(${pageNumberIndex-1})">Previous</a></li>
 		`;
 	}
 	else{
 		pagination = `				
-		<li class="page-item"><a class="page-link" href="#" onclick="getUsersByPage(${pageNumberIndex},${5}), activeNumber(${pageNumberIndex-1})">Previous</a></li>
+		<li class="page-item"><a class="page-link" href="#" onclick="getUsersByPage(${pageNumberIndex},${limitsize}), activeNumber(${pageNumberIndex-1})">Previous</a></li>
 		`;
 	}
 
 	let totalusers = search == true ? await getAllUsersSearch() : await getUsers();
-	console.log('totalpage'+Math.ceil(totalusers.length/5)+totalusers.length)
-	for (var i = 0; i < Math.ceil(totalusers.length/5); i++){
+	// console.log('totalpage'+Math.ceil(totalusers.length/limitsize)+totalusers.length)
+	for (var i = 0; i < Math.ceil(totalusers/limitsize); i++){
 		if( i == pageNumberIndex){
 			pagination += `				
 			<li class="page-item active">
@@ -449,12 +489,12 @@ async function loadDataUser(data) {
 		else{
 			if(search == true){
 				pagination += `				
-				<li class="page-item" active><a class="page-link" href="#" onclick="getSearchUsers(${i+1},${5}, '${this.name}','${this.email}','${this.role}',${this.status}), activeNumber(${i})">${i+1}</a></li>
+				<li class="page-item" active><a class="page-link" href="#" onclick="getSearchUsers(${i+1},${limitsize}, '${this.name}','${this.email}','${this.role}',${this.status}), activeNumber(${i})">${i+1}</a></li>
 				`;
 			} 
 			else{
 				pagination += `				
-				<li class="page-item" active><a class="page-link" href="#" onclick="getUsersByPage(${i+1},${5}), activeNumber(${i})">${i+1}</a></li>
+				<li class="page-item" active><a class="page-link" href="#" onclick="getUsersByPage(${i+1},${limitsize}), activeNumber(${i})">${i+1}</a></li>
 				`;
 			}
 		}
@@ -463,12 +503,12 @@ async function loadDataUser(data) {
 	}
 	if(search == true ){
 		pagination += `				
-		<li class="page-item"><a class="page-link" href="#" onclick="getSearchUsers(${pageNumberIndex+2 <= Math.ceil(totalusers.length/5) ? pageNumberIndex+2:Math.ceil(totalusers.length/5)},${5}, '${this.name}','${this.email}','${this.role}',${this.status}), activeNumber(${pageNumberIndex+1 <= Math.ceil(totalusers.length/5)-1 ? pageNumberIndex+1 :pageNumberIndex})">Next</a></li>
+		<li class="page-item"><a class="page-link" href="#" onclick="getSearchUsers(${pageNumberIndex+2 <= Math.ceil(totalusers/limitsize) ? pageNumberIndex+2:Math.ceil(totalusers/limitsize)},${limitsize}, '${this.name}','${this.email}','${this.role}',${this.status}), activeNumber(${pageNumberIndex+1 <= Math.ceil(totalusers/limitsize)-1 ? pageNumberIndex+1 :pageNumberIndex})">Next</a></li>
 		`;
 	}
 	else{
 		pagination += `				
-		<li class="page-item"><a class="page-link" href="#" onclick="getUsersByPage(${pageNumberIndex+2 <= Math.ceil(totalusers.length/5) ? pageNumberIndex+2:Math.ceil(totalusers.length/5)  },${5}), activeNumber(${pageNumberIndex+1 <= Math.ceil(totalusers.length/5)-1 ? pageNumberIndex+1 :pageNumberIndex})">Next</a></li>
+		<li class="page-item"><a class="page-link" href="#" onclick="getUsersByPage(${pageNumberIndex+2 <= Math.ceil(totalusers/limitsize) ? pageNumberIndex+2:Math.ceil(totalusers/limitsize)  },${limitsize}), activeNumber(${pageNumberIndex+1 <= Math.ceil(totalusers/limitsize)-1 ? pageNumberIndex+1 :pageNumberIndex})">Next</a></li>
 		`;
 	}
 
@@ -477,7 +517,7 @@ async function loadDataUser(data) {
 
 	var headtb;
 	headtb = `
-	<p class="font-monospace ml-2 font-weight-bold">hiển thị ${pageNumberIndex*5+1} - ${pageNumberIndex*5+data.length} trên tổng ${totalusers.length} user</p>
+	<p class="font-monospace ml-2 font-weight-bold">hiển thị ${pageNumberIndex*limitsize+1} - ${pageNumberIndex*limitsize+data.length} trên tổng ${totalusers} user</p>
 	`;
 	$('#headtb').html(headtb);
 }
@@ -589,6 +629,6 @@ function resetForm() {
 	$('#searchForm').trigger('reset');
 	search = false;
 	console.log(search);
-	getUsersByPage(1,5);
+	getUsersByPage(1,limitsize);
 	// getUsers();
 }

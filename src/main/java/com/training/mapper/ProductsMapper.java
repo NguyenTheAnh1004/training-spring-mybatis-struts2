@@ -13,6 +13,8 @@ import com.training.model.User;
 public interface ProductsMapper {
 
 	public List<Product> getAllProducts();
+	
+	public Integer countAllProducts();
 
 	public List<Product> getProductsByPage(@Param("page") Integer page, @Param("size") Integer size);
 
@@ -29,5 +31,8 @@ public interface ProductsMapper {
 			@Param("princeto") Integer princeto);
 
 	public List<Product> getAllProductsBySearch(@Param("name") String name, @Param("active") Integer active,
+			@Param("princefrom") Integer princefrom, @Param("princeto") Integer princeto);
+	
+	public Integer countAllProductsBySearch(@Param("name") String name, @Param("active") Integer active,
 			@Param("princefrom") Integer princefrom, @Param("princeto") Integer princeto);
 }

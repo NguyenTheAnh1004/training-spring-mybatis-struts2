@@ -5,7 +5,8 @@ let productname = '';
 let	active;
 let	priceFrom;
 let	priceTo;
-getProductsByPage(1,5)
+let limitsize = 4;
+getProductsByPage(1,limitsize)
 
 function activeNumber(pageIndex = 0) {
 	pageNumberIndex = pageIndex;
@@ -32,7 +33,7 @@ async function getAllProducts() {
 		},
 	});
 	console.log('data'+data.products)
-	return data.products;
+	return data.totalProducts;
 }
 
 $("#btnSearchProduct").click(function() {
@@ -42,7 +43,7 @@ $("#btnSearchProduct").click(function() {
 	this.priceTo = $('#searchProductForm input[name="priceTo"]').val();
 	search = true;
 	// alert(productname + active + priceFrom + priceTo);
-	getSearchProducts(page = 1, size = 5, this.productname, this.active, this.priceFrom, this.priceTo)
+	getSearchProducts(page = 1 , size = limitsize, this.productname, this.active, this.priceFrom, this.priceTo)
 	// console.log('sear' + search);
 	activeNumber(0);
 	// console.log('data'+this.name+this.email+this.role+this.status)
@@ -51,7 +52,7 @@ $("#btnSearchProduct").click(function() {
 	
 });
 
-function getSearchProducts(page = 1, size = 5, productname = '', active = 1, priceFrom = 0, priceTo = 500) {
+function getSearchProducts(page = 1, size = limitsize, productname = '', active = 1, priceFrom = 0, priceTo = 500) {
 	$.ajax({
 		type: 'GET',
 		url: 'listproductsearch.do',
@@ -86,10 +87,10 @@ async function getAllProductsSearch() {
 		},
 	});
 	console.log('data'+ data.products)
-	return data.products;
+	return data.totalProducts;
 }
 
-async function getProductsByPage(page = 1, size = 5) {
+async function getProductsByPage(page = 1, size = limitsize) {
 	$.ajax({
 		type: 'GET',
 		url: 'listproductpage.do',
@@ -111,7 +112,7 @@ async function loadDataProduct(data) {
 	for (var i = 0; i < products.length; i++) {
 		productData += `
 		<tr>
-							<td class="nowrap">${pageNumberIndex*5+i+1}</td>
+							<td class="nowrap">${pageNumberIndex*limitsize+i+1}</td>
 							<td class="nowrap">${products[i].id ? products[i].id : ''}</td>
 							<td class="nowrap">${products[i].name ? products[i].name : ''}</td>
 							<td class="nowrap">${products[i].shortDes ? products[i].shortDes : ''}</td>
@@ -154,19 +155,19 @@ async function loadDataProduct(data) {
 	var pagination;
 	if(search == true ){
 		pagination = `				
-		<li class="page-item"><a class="page-link" href="#" onclick="getSearchProducts(${pageNumberIndex},${5}, '${this.productname}', '${this.active}', '${this.priceFrom}', '${this.priceTo}'), activeNumber(${pageNumberIndex-1})">Previous</a></li>
+		<li class="page-item"><a class="page-link" href="#" onclick="getSearchProducts(${pageNumberIndex},${limitsize}, '${this.productname}', '${this.active}', '${this.priceFrom}', '${this.priceTo}'), activeNumber(${pageNumberIndex-1})">Previous</a></li>
 		`;
 	}
 	else{
 		pagination = `				
-		<li class="page-item"><a class="page-link" href="#" onclick="getProductsByPage(${pageNumberIndex},${5}), activeNumber(${pageNumberIndex-1})">Previous</a></li>
+		<li class="page-item"><a class="page-link" href="#" onclick="getProductsByPage(${pageNumberIndex},${limitsize}), activeNumber(${pageNumberIndex-1})">Previous</a></li>
 		`;
 	}
 	// let totalusers = search == true ? await getAllUsersSearch() : await getUsers();
 	// console.log('totalpage'+Math.ceil(totalusers.length/5)+totalusers.length)
 	let totalProducts = (search == true) ? await getAllProductsSearch() :await getAllProducts();
 	console.log('totalpage '+ totalProducts.length)
-	for (var i = 0; i < Math.ceil(totalProducts.length/5) ; i++){
+	for (var i = 0; i < Math.ceil(totalProducts/limitsize) ; i++){
 		if( i == pageNumberIndex){
 			pagination += `				
 			<li class="page-item active">
@@ -177,12 +178,12 @@ async function loadDataProduct(data) {
 		else{
 			if(search == true){
 				pagination += `				
-				<li class="page-item" active><a class="page-link" href="#" onclick="getSearchProducts(${i+1},${5}, '${this.productname}', '${this.active}', '${this.priceFrom}', '${this.priceTo}'), activeNumber(${i})">${i+1}</a></li>
+				<li class="page-item" active><a class="page-link" href="#" onclick="getSearchProducts(${i+1},${limitsize}, '${this.productname}', '${this.active}', '${this.priceFrom}', '${this.priceTo}'), activeNumber(${i})">${i+1}</a></li>
 				`;
 			} 
 			else{
 				pagination += `				
-				<li class="page-item" active><a class="page-link" href="#" onclick="getProductsByPage(${i+1},${5}), activeNumber(${i})">${i+1}</a></li>
+				<li class="page-item" active><a class="page-link" href="#" onclick="getProductsByPage(${i+1},${limitsize}), activeNumber(${i})">${i+1}</a></li>
 				`;
 			}
 		}
@@ -191,12 +192,12 @@ async function loadDataProduct(data) {
 	}
 	if(search == true ){
 		pagination += `				
-		<li class="page-item"><a class="page-link" href="#" onclick="getSearchProducts(${pageNumberIndex+2 <= Math.ceil(totalProducts.length/5) ? pageNumberIndex+2:Math.ceil(totalProducts.length/5)},${5}, '${this.productname}', '${this.active}', '${this.priceFrom}', '${this.priceTo}'), activeNumber(${pageNumberIndex+1 <= Math.ceil(totalProducts.length/5)-1 ? pageNumberIndex+1 :pageNumberIndex})">Next</a></li>
+		<li class="page-item"><a class="page-link" href="#" onclick="getSearchProducts(${pageNumberIndex+2 <= Math.ceil(totalProducts/limitsize) ? pageNumberIndex+2:Math.ceil(totalProducts/limitsize)},${limitsize}, '${this.productname}', '${this.active}', '${this.priceFrom}', '${this.priceTo}'), activeNumber(${pageNumberIndex+1 <= Math.ceil(totalProducts/limitsize)-1 ? pageNumberIndex+1 :pageNumberIndex})">Next</a></li>
 		`;
 	}
 	else{
 		pagination += `				
-		<li class="page-item"><a class="page-link" href="#" onclick="getProductsByPage(${pageNumberIndex+2 <= Math.ceil(totalProducts.length/5) ? pageNumberIndex+2:Math.ceil(totalProducts.length/5)  },${5}), activeNumber(${pageNumberIndex+1 <= Math.ceil(totalProducts.length/5)-1 ? pageNumberIndex+1 :pageNumberIndex})">Next</a></li>
+		<li class="page-item"><a class="page-link" href="#" onclick="getProductsByPage(${pageNumberIndex+2 <= Math.ceil(totalProducts/limitsize) ? pageNumberIndex+2:Math.ceil(totalProducts/limitsize)  },${limitsize}), activeNumber(${pageNumberIndex+1 <= Math.ceil(totalProducts/limitsize)-1 ? pageNumberIndex+1 :pageNumberIndex})">Next</a></li>
 		`;
 	}
 
@@ -204,7 +205,7 @@ async function loadDataProduct(data) {
 
 	var headtb;
 	headtb = `
-	<p class="font-monospace ml-2 font-weight-bold">hiển thị ${pageNumberIndex*5+1} - ${pageNumberIndex*5+data.length} trên tổng ${totalProducts.length} user</p>
+	<p class="font-monospace ml-2 font-weight-bold">hiển thị ${pageNumberIndex*limitsize+1} - ${pageNumberIndex*limitsize+data.length} trên tổng ${totalProducts} user</p>
 	`;
 	$('#headtbproduct').html(headtb);
 }
@@ -244,7 +245,7 @@ $("#btnProductEdit").click(async function() {
 	var prince = $('#editProductModal input[name="prince"]').val();
 	var description = $('#editProductModal #modaleditDes').val();
 	var stt = $('#editProductModal select[name="stt"] option:selected').val();
-	await Validation(name, prince);
+	await ValidationEdit(name, prince);
 	if (boolean == true) {
 		$.ajax({
 			url: 'updateproduct.do',
@@ -259,7 +260,7 @@ $("#btnProductEdit").click(async function() {
 					if(search == true){
 						location.reload();
 					}else{
-						getProductsByPage(pageNumberIndex+1,5)
+						getProductsByPage(pageNumberIndex+1,limitsize)
 					}
 					
 					// console.log(response)
@@ -343,6 +344,31 @@ async function Validation(name, prince) {
 	return boolean;
 }
 
+async function ValidationEdit(name, prince) {
+	boolean = true;
+	// validate name
+
+	if (name.length <= 0) {
+		setError("errorEditProductName", 'Tên không được để trống');
+		boolean = false;
+	}
+	else {
+		setError("errorEditProductName", '');
+	}
+
+	//prince
+
+	if(prince <= 0 || prince.length < 0 ){
+		setError("errorEditProductPrince", 'giá phải lớn hơn 0');
+		boolean = false;
+	}
+	else {
+		setError("errorEditProductPrince", '');
+	}
+
+	return boolean;
+}
+
 // logout
 function logout() {
 	window.location.href = '/logout.do';
@@ -353,6 +379,6 @@ function resetForm() {
 	$('#searchProductForm').trigger('reset');
 	search = false;
 	console.log(search);
-	getProductsByPage(1,5);
+	getProductsByPage(1,limitsize);
 	// getUsers();
 }

@@ -48,8 +48,9 @@ public class ProductAction extends ActionSupport
 
 	private Integer page = 1;
 	private Integer size = 5;
-	private Integer princeFrom = 0;
-	private Integer princeTo = 200;
+	private Integer princeFrom;
+	private Integer princeTo;
+	private Integer totalProducts;
 
 	// manage
 	public String productmanage() {
@@ -64,14 +65,6 @@ public class ProductAction extends ActionSupport
 	}
 
 	public String insert() {
-//		User user = new User(email, passwordEncoder.encode(password), name, role, status);
-//		user.setCreatedAt(new Date());
-//		System.out.println(user.getEmail());
-//		usersMapper.insertUser(user);
-//		System.out.println(this.name);
-//		System.out.println(this.prince);
-//		System.out.println(this.description);
-//		System.out.println(this.stt);
 		Product product = new Product(this.name, this.prince, this.description, this.stt);
 		product.setCreatedAt(new Date());
 		productsMapper.insertProduct(product);
@@ -80,50 +73,36 @@ public class ProductAction extends ActionSupport
 
 	public String update() {
 		Product product = new Product(this.id, this.name, this.prince, this.description, this.stt);
-//		System.out.println(this.id);
-//		System.out.println(this.name);
-//		System.out.println(this.prince);
-//		System.out.println(this.description);
-//		System.out.println(this.stt);
-//		product.setCreatedAt(new Date());
-//		productsMapper.insertProduct(product);;
 		productsMapper.updateProduct(product);
 		return SUCCESS;
 	}
 
-	public String findbysearch() {
+	public String findBySearch() {
 		System.out.println(this.name);
 		this.products = productsMapper.getProductsBySearch((page - 1) * size, size, name, stt, princeFrom, princeTo);
 		return SUCCESS;
 	}
 
-	public String findallbysearch() {
+	public String findAllbySearch() {
 		System.out.println(this.name);
 		this.products = productsMapper.getAllProductsBySearch(name, stt, princeFrom, princeTo);
+		this.totalProducts = productsMapper.countAllProductsBySearch(name, stt, princeFrom, princeTo);
 		return SUCCESS;
 	}
 
 	public String delete() {
-//		Product product = new Product(this.id, this.name, this.prince, this.description, this.stt);
-//		System.out.println(this.id);
-//		System.out.println(this.name);
-//		System.out.println(this.prince);
-//		System.out.println(this.description);
-//		System.out.println(this.stt);
-//		product.setCreatedAt(new Date());
-//		productsMapper.insertProduct(product);;
-//		System.out.println(id);
 		productsMapper.deleteProduct(this.id);
 		return SUCCESS;
 	}
 
-	public String findbypage() {
+	public String findByPage() {
 		this.products = productsMapper.getProductsByPage((page - 1) * size, size);
 		return SUCCESS;
 	}
 
-	public String findall() {
+	public String findAll() {
 		this.products = productsMapper.getAllProducts();
+		this.totalProducts = productsMapper.countAllProducts();
 		return SUCCESS;
 	}
 
@@ -205,6 +184,14 @@ public class ProductAction extends ActionSupport
 
 	public void setPrinceTo(Integer princeTo) {
 		this.princeTo = princeTo;
+	}
+
+	public Integer getTotalProducts() {
+		return totalProducts;
+	}
+
+	public void setTotalProducts(Integer totalProducts) {
+		this.totalProducts = totalProducts;
 	}
 
 	public Integer getTokenExpiredTime() {

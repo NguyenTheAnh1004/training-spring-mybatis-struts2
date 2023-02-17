@@ -63,6 +63,8 @@ public class UserAction extends ActionSupport
 
 //	public String name, email, role, password;
 	private Boolean status;
+	
+	private Integer totalUsers;
 
 	
 	//login
@@ -159,15 +161,11 @@ public class UserAction extends ActionSupport
 	}
 	
 	public String testmb() {
-//		usersExample example = new usersExample();
-//		users usersmb = usersMapper.selectByPrimaryKey("admin@gmail.com");
-//		System.out.println(usersmb);
 		this.users = usersMapper.getAllUsers();
-//		System.out.println("test"+user);
 		return SUCCESS;
 	}
 	
-	public String findalluser() {
+	public String findAllUser() {
 		
 		System.out.println(userSession.get(REMEMBER_TOKEN));
 		if (getRememberToken() == null && userSession.get(REMEMBER_TOKEN) == null) {
@@ -178,11 +176,11 @@ public class UserAction extends ActionSupport
 			userSession.put(USER, user1.getEmail());
 		}
 		this.users = usersMapper.getUserAll();
+		this.totalUsers = usersMapper.countAllUser();
 		return SUCCESS;
 	}
 	
-	public String findallsearch() {
-		
+	public String findAllSearch() {	
 		System.out.println(userSession.get(REMEMBER_TOKEN));
 		if (getRememberToken() == null && userSession.get(REMEMBER_TOKEN) == null) {
 			return "login";
@@ -197,27 +195,19 @@ public class UserAction extends ActionSupport
 		System.out.println(role);
 		User user = new User(email, name, role, status);
 		this.users = usersMapper.findAllUserBySearch(user);
+		this.totalUsers = usersMapper.countAllUserBySearch(user);
 		return SUCCESS;
 	}
 	
+	public String listByPage() {
+		System.out.println(page);
+		System.out.println(size);
+		this.users = usersMapper.getUserAllWPage((page-1)*size, size);
+		System.out.println(this.users);
+		return SUCCESS;
+	}
 	
-	public String listbypage() {
-//	if (getRememberToken() == null && userSession.get(REMEMBER_TOKEN) == null) {
-//		return "login";
-//	}
-//	if (getRememberToken() != null && usersMapper.getRememberToken(getRememberToken()) > 0) {
-//		User user1 = usersMapper.getMailByToken(getRememberToken());
-//		userSession.put(USER, user1.getEmail());
-//	}
-
-	System.out.println(page);
-	System.out.println(size);
-//	User user = new User(email,name,role,status);
-	this.users = usersMapper.getUserAllWPage((page-1)*size, size);
-	System.out.println(this.users);
-	return SUCCESS;
-}
-	public String getbymail() {
+	public String getByMail() {
 		try {
 			this.userBean = usersMapper.getUserByMail(email);
 			System.out.println("USER " + userBean);
@@ -227,7 +217,7 @@ public class UserAction extends ActionSupport
 		return SUCCESS;
 	}
 
-	public String changestt() {
+	public String changeStt() {
 		System.out.println(id);
 		System.out.println(status);
 		usersMapper.changestt(id, !status);
@@ -380,9 +370,14 @@ public class UserAction extends ActionSupport
 	public void setSize(int size) {
 		this.size = size;
 	}
-	
-	
 
+	public Integer getTotalUsers() {
+		return totalUsers;
+	}
+
+	public void setTotalUsers(Integer totalUsers) {
+		this.totalUsers = totalUsers;
+	}
 
 	public Integer getTokenExpiredTime() {
 		if (servletRequest.getCookies() != null)

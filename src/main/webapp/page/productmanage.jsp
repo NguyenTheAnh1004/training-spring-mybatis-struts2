@@ -326,7 +326,7 @@
 										id="modalName" />
 								</div>
 								<div class="ml-5">
-									<small class="pl-5 ml-5 text-danger" id="errorProductName"></small>
+									<small class="pl-5 ml-5 text-danger" id="errorEditProductName"></small>
 								</div>
 							</div>
 							<div class="form-group row">
@@ -338,7 +338,7 @@
 										id="modalPrince" />
 								</div>
 								<div class="ml-5">
-									<small class="pl-5 ml-5 text-danger" id="errorProductPrince"></small>
+									<small class="pl-5 ml-5 text-danger" id="errorEditProductPrince"></small>
 								</div>
 							</div>
 							<div class="form-group row">

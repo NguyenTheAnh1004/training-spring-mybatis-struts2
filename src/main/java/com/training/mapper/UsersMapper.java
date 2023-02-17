@@ -59,4 +59,8 @@ public interface UsersMapper {
 	public List<User> findAllUserBySearch(@Param("user") User user);
 
 	public List<User> getAllUsers();
+	
+	public Integer countAllUser();
+	
+	public Integer countAllUserBySearch(@Param("user") User user);
 }

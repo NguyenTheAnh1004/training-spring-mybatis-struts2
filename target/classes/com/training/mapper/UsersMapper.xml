@@ -8,119 +8,144 @@
 	</resultMap>
 
 	<select id="getAllUsers" resultMap="userResultMap">
-		select * from users
-		where
-		is_delete = 1 ORDER BY create_at DESC
+		SELECT * FROM users
+		WHERE is_delete = 1 
+		ORDER BY create_at DESC
 	</select>
 
 	<select id="getUserAll" resultMap="userResultMap">
 		SELECT * FROM users
-		where
-		is_delete = 0
+		WHERE is_delete = 0
 		ORDER BY create_at DESC
+	</select>
+	
+	<select id="countAllUser" resultType="Integer">
+		SELECT COUNT(*)  
+		FROM users
+		WHERE is_delete = 0
 	</select>
 
 	<select id="getUserAllWPage" resultMap="userResultMap">
 		SELECT * FROM users
-		where
-		is_delete = 0 ORDER BY create_at DESC Limit #{page},#{size}
+		WHERE is_delete = 0 
+		ORDER BY create_at DESC 
+		LIMIT #{page},#{size}
 	</select>
 
 	<select id="getRememberToken" resultType="Integer">
-		SELECT COUNT(*) FROM
-		users WHERE users.remember_token = #{rememberToken}
+		SELECT COUNT(*) 
+		FROM users 
+		WHERE users.remember_token = #{rememberToken}
 	</select>
 
 	<select id="getMailByToken" resultMap="userResultMap">
-		SELECT email FROM users
+		SELECT email 
+		FROM users
 		WHERE users.remember_token = #{rememberToken}
 	</select>
 
 	<select id="getUserByMail" resultMap="userResultMap">
-		SELECT * FROM users where
-		users.email = #{email}
+		SELECT * FROM users 
+		WHERE users.email = #{email}
 	</select>
 
 	<select id="findUserByOption" resultMap="userResultMap">
-		SELECT id, name, email,
-		group_role, status FROM users WHERE is_delete =
-		0 and users.email like
-		CONCAT('%', #{user.email}, '%')
-		<if test="user.name != null">
-			And users.name
-			like CONCAT('%',
-			#{user.name}, '%')
-		</if>
-		<if test="user.groupRole != null">
-			And users.group_role like
-			CONCAT('%',
-			#{user.groupRole},
-			'%')
-		</if>
-		<if test="user.status != null">
-			And users.status = #{user.status}
-		</if>
-		Limit
-		#{page},#{size}
+		SELECT id, 
+			name, email,	
+			group_role, 
+			status 
+		FROM users 
+		WHERE is_delete = 0 
+			<if test="user.email != null">
+				AND users.email like CONCAT('%', #{user.email}, '%')
+			</if>
+			<if test="user.name != null">
+				AND users.name like CONCAT('%',#{user.name}, '%')
+			</if>
+			<if test="user.groupRole != null">
+				AND users.group_role like CONCAT('%', #{user.groupRole},'%')
+			</if>
+			<if test="user.status != null">
+				AND users.status = #{user.status}
+			</if>
+		ORDER BY create_at DESC
+		LIMIT #{page},#{size}
 	</select>
 
 	<select id="findAllUserBySearch" resultMap="userResultMap">
-		SELECT id, name,
-		email, group_role, status FROM users WHERE is_delete =
-		0 and
-		users.email like CONCAT('%', #{user.email}, '%') And users.name
-		like
-		CONCAT('%', #{user.name}, '%')
-		<if test="user.groupRole != null">
-			And users.group_role like
-			CONCAT('%',
-			#{user.groupRole},
-			'%')
-		</if>
-		<if test="user.status != null">
-			And users.status = #{user.status}
-		</if>
+		SELECT id, name, email, group_role, status 
+		FROM users 
+		WHERE is_delete = 0 
+			<if test="user.email != null">
+				AND users.email like CONCAT('%', #{user.email}, '%')
+			</if>
+			<if test="user.name != null">
+				AND users.name like CONCAT('%',#{user.name}, '%')
+			</if>
+			<if test="user.groupRole != null">
+				AND users.group_role like CONCAT('%', #{user.groupRole},'%')
+			</if>
+			<if test="user.status != null">
+				AND users.status = #{user.status}
+			</if>
+	</select>
+	
+	<select id="countAllUserBySearch" resultType="Integer">
+		SELECT COUNT(*)
+		FROM users 
+		WHERE is_delete = 0 
+			<if test="user.email != null">
+				AND users.email like CONCAT('%', #{user.email}, '%')
+			</if>
+			<if test="user.name != null">
+				AND users.name like CONCAT('%',#{user.name}, '%')
+			</if>
+			<if test="user.groupRole != null">
+				AND users.group_role like CONCAT('%', #{user.groupRole},'%')
+			</if>
+			<if test="user.status != null">
+				AND users.status = #{user.status}
+			</if>
 	</select>
 
 	<update id="updateLogin">
 		UPDATE users
 		SET users.login_date = #{user.loginDate},
-		users.last_iplogin =
-		#{user.lastIpLogin}
-		WHERE users.email =
-		#{user.email}
+			users.last_iplogin = #{user.lastIpLogin}
+		WHERE users.email = #{user.email}
 	</update>
 
 	<update id="updateRmbToken">
 		UPDATE users
-		SET users.remember_token =
-		#{user.rememberToken}
+		SET users.remember_token = #{user.rememberToken}
 		WHERE users.email = #{user.email}
 	</update>
 
 	<update id="updatedelete">
-		UPDATE users SET users.is_delete = true WHERE
-		users.id = #{id}
+		UPDATE users SET users.is_delete = true 
+		WHERE users.id = #{id}
 	</update>
 
 	<update id="changestt">
-		UPDATE users SET users.status = #{stt} WHERE users.id
-		= #{id}
+		UPDATE users 
+		SET users.status = #{stt} 
+		WHERE users.id = #{id}
 	</update>
 
 	<update id="updateUser">
-		UPDATE users SET users.name = #{user.name},
-		users.email = #{user.email}, users.group_role = #{user.groupRole},
-		users.status = #{user.status} WHERE users.id = #{user.id}
+		UPDATE users 
+		SET users.name = #{user.name}, users.email = #{user.email}, 
+			users.group_role = #{user.groupRole}, users.status = #{user.status} 
+		WHERE users.id = #{user.id}
 	</update>
 
 	<insert id="insertUser">
 		INSERT INTO users (status, email, password, name,
-		group_role, is_delete,
-		create_at) VALUES (#{user.status},
-		#{user.email}, #{user.password},
-		#{user.name}, #{user.groupRole},
-		false, #{user.createdAt})
+				group_role, is_delete, create_at) 
+		VALUES (#{user.status},
+				#{user.email}, #{user.password},
+				#{user.name}, #{user.groupRole},
+				false, #{user.createdAt})
 	</insert>
 
 </mapper>

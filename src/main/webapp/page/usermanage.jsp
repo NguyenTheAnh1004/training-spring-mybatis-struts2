@@ -98,6 +98,7 @@
 						<div class="form-group mr-0">
 							<label for="inputState">Trạng thái</label> <select name="status"
 								id="inputState" class="form-control pr-5">
+								<option value='' selected>TẤT CẢ</option>
 								<option value="true">Đang hoạt động</option>
 								<option value="false">Tạm khóa</option>
 							</select>
